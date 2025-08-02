@@ -30,7 +30,7 @@ public class AuthController {
         if (isValid) {
             return ResponseEntity.ok("✅ Login successful (JWT to be added later)");
         }
-        return ResponseEntity.status(401).body("❌ Invalid username or password");
+        return ResponseEntity.status(401).body(" Invalid username or password");
     }
 }
 

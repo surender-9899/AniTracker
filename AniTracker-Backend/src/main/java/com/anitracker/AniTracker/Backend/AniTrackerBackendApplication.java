@@ -9,6 +9,7 @@ public class AniTrackerBackendApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(AniTrackerBackendApplication.class, args);
+		System.out.println("hello world");
 
 	}
 

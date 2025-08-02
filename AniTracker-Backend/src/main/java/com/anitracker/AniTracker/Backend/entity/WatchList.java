@@ -7,15 +7,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "watchlist")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class WatchList {
 
     @Id
@@ -33,12 +27,13 @@ public class WatchList {
     private Anime anime;
 
     private int episodesWatched; // Track progress
+    private boolean completed;   // Mark if anime is completed
+    private int rating;          // Optional user rating (1–10 scale)
 
-    private boolean completed; // Mark if anime is completed
+    // ✅ No-arg constructor (Required by Hibernate)
+    public WatchList() { }
 
-    private int rating; // Optional user rating (1–10 scale)
-
-    // Constructor with required fields
+    // ✅ Constructor with required fields
     public WatchList(User user, Anime anime, int episodesWatched, boolean completed, int rating) {
         this.user = user;
         this.anime = anime;
@@ -47,4 +42,22 @@ public class WatchList {
         this.rating = rating;
     }
 
+    // ✅ Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+
+    public Anime getAnime() { return anime; }
+    public void setAnime(Anime anime) { this.anime = anime; }
+
+    public int getEpisodesWatched() { return episodesWatched; }
+    public void setEpisodesWatched(int episodesWatched) { this.episodesWatched = episodesWatched; }
+
+    public boolean isCompleted() { return completed; }
+    public void setCompleted(boolean completed) { this.completed = completed; }
+
+    public int getRating() { return rating; }
+    public void setRating(int rating) { this.rating = rating; }
 }

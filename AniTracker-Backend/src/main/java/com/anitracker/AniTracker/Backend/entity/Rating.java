@@ -14,9 +14,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "ratings")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Rating {
 
     @Id
@@ -32,9 +29,51 @@ public class Rating {
     private Anime anime;
 
     @Column(nullable = false)
-    private int score;  // Rating score
+    private int score;
 
     @Column(length = 500)
-    private String review; // Optional review/comment
+    private String review;
 
+    public Rating() { }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Anime getAnime() {
+        return anime;
+    }
+
+    public void setAnime(Anime anime) {
+        this.anime = anime;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public String getReview() {
+        return review;
+    }
+
+    public void setReview(String review) {
+        this.review = review;
+    }
 }
+
