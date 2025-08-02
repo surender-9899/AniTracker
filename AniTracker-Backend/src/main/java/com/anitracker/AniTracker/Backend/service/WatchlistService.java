@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class WatchlistService {
@@ -24,32 +23,50 @@ public class WatchlistService {
     @Autowired
     private AnimeRepository animeRepository;
 
-    // ✅ Add anime to user's watchlist (Prevents duplicates)
-    public WatchList addToWatchList(Long userId, Long animeId) {
-        Optional<User> userOpt = userRepository.findById(userId);
-        Optional<Anime> animeOpt = animeRepository.findById(animeId);
+    // ✅ Add anime to user's watchlist (Supports episodesWatched, completed, rating)
+    public WatchList addToWatchList(Long userId, Long animeId, int episodesWatched, boolean completed, int rating) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (userOpt.isPresent() && animeOpt.isPresent()) {
-            if (watchlistRepository.findByUserIdAndAnimeId(userId, animeId).isPresent()) {
-                throw new RuntimeException("Anime already in watchlist");
-            }
+        Anime anime = animeRepository.findById(animeId)
+                .orElseThrow(() -> new RuntimeException("Anime not found"));
 
-            WatchList watchList = new WatchList();
-            watchList.setUser(userOpt.get());
-            watchList.setAnime(animeOpt.get());
-            return watchlistRepository.save(watchList);
+        // Prevent duplicate entry
+        if (watchlistRepository.findByUserIdAndAnimeId(userId, animeId).isPresent()) {
+            throw new RuntimeException("Anime already in watchlist");
         }
-        throw new RuntimeException("User or Anime not found");
+
+        WatchList watchList = new WatchList();
+        watchList.setUser(user);
+        watchList.setAnime(anime);
+        watchList.setEpisodesWatched(episodesWatched);
+        watchList.setCompleted(completed);
+        watchList.setRating(rating);
+
+        return watchlistRepository.save(watchList);
     }
 
-    // ✅ Get all anime in user's watchlist
-    public List<WatchList> getWatchListByUserId(Long userId) {
+    // ✅ Get Watchlist by User ID
+    public List<WatchList> getWatchListByUser(Long userId) {
         return watchlistRepository.findByUserId(userId);
     }
 
-    // ✅ Remove anime from watchlist
-    public void removeFromWatchList(Long userId, Long animeId) {
-        Optional<WatchList> watchlist = watchlistRepository.findByUserIdAndAnimeId(userId, animeId);
-        watchlist.ifPresent(watchlistRepository::delete);
+    // ✅ Update Progress in Watchlist
+    public WatchList updateProgress(Long watchListId, int episodesWatched, boolean completed) {
+        WatchList watchList = watchlistRepository.findById(watchListId)
+                .orElseThrow(() -> new RuntimeException("Watchlist entry not found"));
+
+        watchList.setEpisodesWatched(episodesWatched);
+        watchList.setCompleted(completed);
+
+        return watchlistRepository.save(watchList);
+    }
+
+    // ✅ Remove anime from watchlist by WatchList ID
+    public void removeFromWatchList(Long watchListId) {
+        WatchList watchList = watchlistRepository.findById(watchListId)
+                .orElseThrow(() -> new RuntimeException("Watchlist entry not found"));
+
+        watchlistRepository.delete(watchList);
     }
 }

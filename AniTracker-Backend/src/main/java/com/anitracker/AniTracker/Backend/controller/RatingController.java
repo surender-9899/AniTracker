@@ -1,6 +1,6 @@
 package com.anitracker.AniTracker.Backend.controller;
 
-
+import com.anitracker.AniTracker.Backend.dto.RatingRequest;
 import com.anitracker.AniTracker.Backend.entity.Rating;
 import com.anitracker.AniTracker.Backend.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +15,15 @@ public class RatingController {
     @Autowired
     private RatingService ratingService;
 
-    // ✅ Add or Update Rating (with optional review)
+    // ✅ Add or Update Rating using JSON body
     @PostMapping("/add")
-    public Rating addOrUpdateRating(
-            @RequestParam Long userId,
-            @RequestParam Long animeId,
-            @RequestParam int ratingValue,
-            @RequestParam(required = false) String review) {
-
-        return ratingService.addOrUpdateRating(userId, animeId, ratingValue, review);
+    public Rating addOrUpdateRating(@RequestBody RatingRequest ratingRequest) {
+        return ratingService.addOrUpdateRating(
+                ratingRequest.getUserId(),
+                ratingRequest.getAnimeId(),
+                ratingRequest.getRatingValue(),
+                ratingRequest.getReview()
+        );
     }
 
     // ✅ Get All Ratings for a Specific Anime
@@ -51,4 +51,3 @@ public class RatingController {
         return "Rating deleted successfully.";
     }
 }
-
