@@ -2,10 +2,14 @@ package com.anitracker.AniTracker.Backend.service;
 
 import com.anitracker.AniTracker.Backend.entity.User;
 import com.anitracker.AniTracker.Backend.repository.UserRepository;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -21,10 +25,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .roles("USER") // Later we can add ROLE_ADMIN
-                .build();
+        // ✅ Use role dynamically from the database
+        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole());
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                Collections.singleton(authority) // ✅ Apply DB role
+        );
     }
 }

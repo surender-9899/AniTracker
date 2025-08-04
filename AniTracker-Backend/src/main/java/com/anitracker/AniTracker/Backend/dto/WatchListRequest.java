@@ -1,35 +1,37 @@
 package com.anitracker.AniTracker.Backend.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 public class WatchListRequest {
 
-    private Long userId;
+    // Remove userId, get user from authentication context instead
+
+    @NotNull(message = "Anime ID is required")
     private Long animeId;
+
+    @Min(value = 0, message = "Episodes watched must be zero or positive")
     private int episodesWatched;
+
     private boolean completed;
+
+    @Min(value = 0, message = "Rating must be between 0 and 10")
+    @Max(value = 10, message = "Rating must be between 0 and 10")
     private int rating;
 
-    // ✅ No-args constructor (needed for Spring's deserialization)
-    public WatchListRequest() {
-    }
+    // No-args constructor
+    public WatchListRequest() { }
 
-    // ✅ All-args constructor (optional, but useful)
-    public WatchListRequest(Long userId, Long animeId, int episodesWatched, boolean completed, int rating) {
-        this.userId = userId;
+    // All-args constructor
+    public WatchListRequest(Long animeId, int episodesWatched, boolean completed, int rating) {
         this.animeId = animeId;
         this.episodesWatched = episodesWatched;
         this.completed = completed;
         this.rating = rating;
     }
 
-    // ✅ Getters and Setters
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
+    // Getters and setters
     public Long getAnimeId() {
         return animeId;
     }
