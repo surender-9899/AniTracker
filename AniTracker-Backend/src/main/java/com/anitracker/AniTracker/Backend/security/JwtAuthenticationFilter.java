@@ -29,6 +29,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        // ✅ DEBUG LOGGING
+        System.out.println("Incoming request path: " + request.getServletPath());
+
         String path = request.getServletPath();
 
         // ✅ Skip JWT validation for login and register endpoints
