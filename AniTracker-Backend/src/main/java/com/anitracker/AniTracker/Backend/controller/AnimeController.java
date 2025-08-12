@@ -57,9 +57,9 @@ public class AnimeController {
     }
 
     // ✅ Get Anime by Status
-    @GetMapping("/status")
-    public List<Anime> getAnimeByStatus(@RequestParam String status) {
-        return animeService.getAnimeByStatus(status);
+    @GetMapping("/status/{username}")
+    public List<Anime> getAnimeByUsernameAndStatus(@PathVariable String username , @RequestParam String status) {
+        return animeService.getAnimeByUsernameAndStatus(username,status);
     }
 
     // ✅ Delete Anime (Admin feature)

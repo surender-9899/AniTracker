@@ -1,17 +1,18 @@
 package com.anitracker.AniTracker.Backend.service;
 
-import com.anitracker.AniTracker.Backend.entity.WatchList;
-import com.anitracker.AniTracker.Backend.entity.User;
-import com.anitracker.AniTracker.Backend.entity.Anime;
-import com.anitracker.AniTracker.Backend.exception.ResourceNotFoundException;
-import com.anitracker.AniTracker.Backend.exception.UnauthorizedException;
-import com.anitracker.AniTracker.Backend.repository.WatchlistRepository;
-import com.anitracker.AniTracker.Backend.repository.UserRepository;
-import com.anitracker.AniTracker.Backend.repository.AnimeRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.anitracker.AniTracker.Backend.entity.Anime;
+import com.anitracker.AniTracker.Backend.entity.User;
+import com.anitracker.AniTracker.Backend.entity.WatchList;
+import com.anitracker.AniTracker.Backend.exception.ResourceNotFoundException;
+import com.anitracker.AniTracker.Backend.exception.UnauthorizedException;
+import com.anitracker.AniTracker.Backend.repository.AnimeRepository;
+import com.anitracker.AniTracker.Backend.repository.UserRepository;
+import com.anitracker.AniTracker.Backend.repository.WatchlistRepository;
 
 @Service
 public class WatchlistService {
@@ -88,5 +89,18 @@ public class WatchlistService {
         }
 
         watchlistRepository.delete(watchList);
+    }
+
+    // ✅ Update Rating (Ownership check)
+    public WatchList updateRatingForUser(Long watchListId, Long userId, int rating) {
+        WatchList watchList = watchlistRepository.findById(watchListId)
+                .orElseThrow(() -> new ResourceNotFoundException("Watchlist entry not found"));
+
+        if (!watchList.getUser().getId().equals(userId)) {
+            throw new UnauthorizedException("You cannot update another user's watchlist!");
+        }
+
+        watchList.setRating(rating);
+        return watchlistRepository.save(watchList);
     }
 }

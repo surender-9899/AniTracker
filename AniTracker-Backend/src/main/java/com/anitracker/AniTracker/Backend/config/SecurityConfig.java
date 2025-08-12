@@ -3,6 +3,7 @@ package com.anitracker.AniTracker.Backend.config;
 import com.anitracker.AniTracker.Backend.security.JwtAuthenticationFilter;
 import com.anitracker.AniTracker.Backend.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -35,14 +36,16 @@ public class SecurityConfig {
         this.customUserDetailsService = customUserDetailsService;
     }
 
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ Enable CORS
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ Allow preflight requests
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll() // Public endpoints
                         .anyRequest().authenticated() // Other endpoints require JWT
-//                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
@@ -54,7 +57,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("http://localhost:3000")); // ✅ React frontend URL
+        corsConfig.setAllowedOrigins(List.of( "http://localhost:5173",
+                "http://127.0.0.1:5173",
+                "http://localhost:3000")); // ✅ React frontend URL
+        corsConfig.setAllowedOriginPatterns(List.of("*"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         corsConfig.setAllowCredentials(true);

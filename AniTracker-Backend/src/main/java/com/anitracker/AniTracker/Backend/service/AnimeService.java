@@ -1,5 +1,6 @@
 package com.anitracker.AniTracker.Backend.service;
 
+import com.anitracker.AniTracker.Backend.dto.AnimeStatsDTO;
 import com.anitracker.AniTracker.Backend.entity.Anime;
 import com.anitracker.AniTracker.Backend.repository.AnimeRepository;
 import org.springframework.stereotype.Service;
@@ -54,5 +55,21 @@ public class AnimeService {
     // Search anime by status (e.g., Airing, Completed)
     public List<Anime> getAnimeByStatus(String status) {
         return animeRepository.findByStatusIgnoreCase(status);
+    }
+    public AnimeStatsDTO getUserStats(String username) {
+        int watching = animeRepository.countByUsernameAndStatus(username, "watching");
+        int completed = animeRepository.countByUsernameAndStatus(username, "completed");
+        int onHold = animeRepository.countByUsernameAndStatus(username, "onHold");
+        int dropped = animeRepository.countByUsernameAndStatus(username, "dropped");
+
+        return new AnimeStatsDTO(watching, completed, onHold, dropped);
+    }
+
+//    public List<Anime> findByUsernameAndAnimeByStatus(String username, String status) {
+//        return animeRepository.findByUsernameAndStatus(username, status);
+//    }
+
+    public List<Anime> getAnimeByUsernameAndStatus(String username, String status) {
+        return animeRepository.findByUsernameAndStatus(username, status);
     }
 }

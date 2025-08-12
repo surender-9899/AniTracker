@@ -8,13 +8,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "anime")
-
 public class Anime {
 
     @Id
@@ -39,11 +35,14 @@ public class Anime {
 
     private String watchLink; // URL to watch (optional)
 
+    @Column(nullable = false)
+    private String username; // Username of the user who added this anime
+
     public Anime() { }
 
-    // Constructor with required fields
+    // Constructor with all required fields
     public Anime(String title, String genre, int totalEpisodes, int totalSeasons, String type,
-                 String status, LocalDate startDate, String watchLink) {
+                 String status, LocalDate startDate, String watchLink, String username) {
         this.title = title;
         this.genre = genre;
         this.totalEpisodes = totalEpisodes;
@@ -52,8 +51,10 @@ public class Anime {
         this.status = status;
         this.startDate = startDate;
         this.watchLink = watchLink;
+        this.username = username;
     }
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -124,5 +125,13 @@ public class Anime {
 
     public void setWatchLink(String watchLink) {
         this.watchLink = watchLink;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

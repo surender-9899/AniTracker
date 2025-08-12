@@ -1,6 +1,7 @@
 package com.anitracker.AniTracker.Backend.controller;
 
 import com.anitracker.AniTracker.Backend.dto.ProgressUpdateRequest;
+import com.anitracker.AniTracker.Backend.dto.RatingUpdateRequest;
 import com.anitracker.AniTracker.Backend.dto.WatchListRequest;
 import com.anitracker.AniTracker.Backend.entity.WatchList;
 import com.anitracker.AniTracker.Backend.entity.User;
@@ -58,7 +59,6 @@ public class WatchlistController {
         return watchlistService.getWatchListByUser(userId);
     }
 
-
     // ✅ Update Progress (Ownership check in Service Layer)
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/{watchListId}/progress")
@@ -74,6 +74,23 @@ public class WatchlistController {
                 user.getId(),
                 progressUpdate.getEpisodesWatched(),
                 progressUpdate.isCompleted()
+        );
+    }
+
+    // ✅ Update Rating (New endpoint)
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/{watchListId}/rating")
+    public WatchList updateRating(@PathVariable Long watchListId,
+                                  @Valid @RequestBody RatingUpdateRequest ratingUpdate,
+                                  Authentication authentication) {
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
+
+        return watchlistService.updateRatingForUser(
+                watchListId,
+                user.getId(),
+                ratingUpdate.getRating()
         );
     }
 

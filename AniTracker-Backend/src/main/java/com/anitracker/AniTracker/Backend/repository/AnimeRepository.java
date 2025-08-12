@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AnimeRepository extends JpaRepository<Anime, Long> {
+    int countByUsernameAndStatus(String username, String status);
+
 
     // Search anime by title (case-insensitive)
     List<Anime> findByTitleContainingIgnoreCase(String title);
@@ -18,4 +20,6 @@ public interface AnimeRepository extends JpaRepository<Anime, Long> {
 
     // Find anime by exact title
     Optional<Anime> findByTitle(String title);
+
+    List<Anime> findByUsernameAndStatus(String username, String status);
 }
